@@ -10,7 +10,7 @@ import {
   fetchToken,
   spotifyApi,
   getLoginUrl,
-} from "../api/sportify.js";
+} from "../api/sportify";
 
 interface User {
   display_name: string;
@@ -22,6 +22,7 @@ interface User {
 interface AuthContextType {
   token: string | null;
   user: User | null;
+  loading: boolean;
   login: () => void;
   logout: () => void;
 }
@@ -31,11 +32,12 @@ const AuthContext = createContext<AuthContextType | null>(null);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const logout = () => {
     setToken(null);
     setUser(null);
-    window.localStorage.removeItem("spotify_token");
+    localStorage.removeItem("spotify_token");
   };
 
   const login = async () => {
@@ -45,34 +47,41 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const code = getCodeFromUrl();
-    const savedToken = window.localStorage.getItem("spotify_token");
+    const savedToken = localStorage.getItem("spotify_token");
 
-    if (savedToken) {
-      setToken(savedToken);
-      spotifyApi("/me", savedToken)
-        .then(setUser)
-        .catch(() => logout());
-    } else if (code) {
-      fetchToken(code)
-        .then((t) => {
-          setToken(t);
-          window.localStorage.setItem("spotify_token", t);
-          return spotifyApi("/me", t);
-        })
-        .then(setUser)
-        .catch(() => logout());
-    }
+    const init = async () => {
+      try {
+        let accessToken = savedToken;
+
+        if (!accessToken && code) {
+          accessToken = await fetchToken(code);
+          localStorage.setItem("spotify_token", accessToken);
+        }
+
+        if (accessToken) {
+          setToken(accessToken);
+          const profile = await spotifyApi("/me", accessToken);
+          setUser(profile);
+        }
+      } catch (err) {
+        logout();
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    init();
   }, []);
 
   return (
-    <AuthContext.Provider value={{ token, user, login, logout }}>
+    <AuthContext.Provider value={{ token, user, loading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
 export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) throw new Error("useAuth must be used within AuthProvider");
-  return context;
+  const ctx = useContext(AuthContext);
+  if (!ctx) throw new Error("useAuth must be used within AuthProvider");
+  return ctx;
 };

@@ -1,54 +1,61 @@
+import { Play, Pause, SkipBack, SkipForward } from "lucide-react";
 import { usePlayer } from "../context/PlayerContext";
-import { Play, Pause, SkipBack, SkipForward, Volume2 } from "lucide-react";
-function Player() {
-  const { currentTrack, isPlaying, togglePlay } = usePlayer();
+
+const Player = () => {
+  const { currentTrack, isPlaying, togglePlay, playNext, playPrev } =
+    usePlayer();
 
   if (!currentTrack) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-black border-t border-zinc-900 h-24 flex items-center px-4 z-50">
-      {/* Left */}
-      <div className="flex items-center gap-4 flex-1">
+    <footer className="fixed bottom-0 left-0 right-0 h-24 bg-[#181818] border-t border-white/10 text-white px-6 flex items-center justify-between">
+      {/* Left: track info */}
+      <div className="flex items-center gap-4 w-1/3">
         <img
-          src={currentTrack.album.images[0]?.url || "/placeholder.jpg"}
-          alt=""
+          src={currentTrack.album.images[0]?.url}
           className="w-14 h-14 rounded"
         />
         <div>
-          <p className="font-medium text-sm">{currentTrack.name}</p>
+          <p className="font-semibold text-sm">{currentTrack.name}</p>
           <p className="text-xs text-gray-400">
             {currentTrack.artists.map((a) => a.name).join(", ")}
           </p>
         </div>
       </div>
 
-      {/* Center */}
-      <div className="flex items-center gap-8">
-        <SkipBack className="w-5 h-5 cursor-pointer hover:text-white text-gray-400" />
-        {isPlaying ? (
-          <Pause
-            onClick={togglePlay}
-            className="w-10 h-10 cursor-pointer fill-white"
+      {/* Center: controls */}
+      <div className="flex flex-col items-center w-1/3">
+        <div className="flex items-center gap-5">
+          <SkipBack
+            className="w-6 h-6 hover:scale-110 cursor-pointer"
+            onClick={playPrev}
           />
-        ) : (
-          <Play
-            onClick={togglePlay}
-            className="w-10 h-10 cursor-pointer fill-white"
+          {isPlaying ? (
+            <div
+              className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-black hover:scale-105 cursor-pointer"
+              onClick={togglePlay}
+            >
+              <Pause />
+            </div>
+          ) : (
+            <div
+              className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-black hover:scale-105 cursor-pointer"
+              onClick={togglePlay}
+            >
+              <Play />
+            </div>
+          )}
+          <SkipForward
+            className="w-6 h-6 hover:scale-110 cursor-pointer"
+            onClick={playNext}
           />
-        )}
-        <SkipForward className="w-5 h-5 cursor-pointer hover:text-white text-gray-400" />
+        </div>
       </div>
 
-      {/* Right */}
-      <div className="flex items-center gap-3 flex-1 justify-end">
-        <Volume2 className="w-5 h-5" />
-        <input
-          type="range"
-          className="w-28 accent-green-500"
-          defaultValue="70"
-        />
-      </div>
-    </div>
+      {/* Right: volume / placeholder */}
+      <div className="w-1/3"></div>
+    </footer>
   );
-}
+};
+
 export default Player;

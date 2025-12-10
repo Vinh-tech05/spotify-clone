@@ -7,14 +7,10 @@ interface Props {
   index: number;
 }
 
-function SongRow({ track, index }: Props) {
+const SongRow = ({ track, index }: Props) => {
   const { playTrack } = usePlayer();
 
   const handlePlay = () => {
-    if (!track.preview_url) {
-      alert("Bài này không có preview 30s từ Spotify!");
-      return;
-    }
     playTrack(track);
   };
 
@@ -63,6 +59,6 @@ function SongRow({ track, index }: Props) {
       </div>
     </div>
   );
-}
+};
 
 export default SongRow;

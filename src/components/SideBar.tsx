@@ -1,43 +1,47 @@
 import { Home, Search, Library, PlusCircle, Heart } from "lucide-react";
+import { NavLink } from "react-router-dom";
 
-function Sidebar() {
+const Sidebar = () => {
+  const navClass = ({ isActive }: { isActive: boolean }) =>
+    `flex items-center gap-4 font-semibold ${
+      isActive ? "text-white" : "text-gray-400 hover:text-white"
+    }`;
+
   return (
-    <div className="w-64 bg-black p-6 flex flex-col gap-8">
-      <div className="text-2xl font-bold text-white">
-        Sportify
-        <i className="fa-brands fa-spotify"></i>
-      </div>
+    <div className="w-64 bg-[#121212] p-6 flex flex-col gap-8">
+      {/* Logo */}
+      <div className="text-2xl font-bold text-white">Spotify</div>
 
+      {/* Main nav */}
       <nav className="space-y-4">
-        <a
-          href="#"
-          className="flex items-center gap-4 text-white font-semibold"
-        >
+        <NavLink to="/" className={navClass}>
           <Home className="w-6 h-6" /> Trang chủ
-        </a>
-        <a
-          href="#"
-          className="flex items-center gap-4 text-gray-400 hover:text-white"
-        >
+        </NavLink>
+
+        <NavLink to="/search" className={navClass}>
           <Search className="w-6 h-6" /> Tìm kiếm
-        </a>
-        <a
-          href="#"
-          className="flex items-center gap-4 text-gray-400 hover:text-white"
-        >
+        </NavLink>
+
+        <NavLink to="/library" className={navClass}>
           <Library className="w-6 h-6" /> Thư viện
-        </a>
+        </NavLink>
       </nav>
 
-      <div className="space-y-4">
+      {/* Extra */}
+      <div className="space-y-4 mt-6">
         <button className="flex items-center gap-4 text-gray-400 hover:text-white">
           <PlusCircle className="w-6 h-6" /> Tạo Playlist
         </button>
-        <button className="flex items-center gap-4 text-gray-400 hover:text-white">
+
+        <NavLink
+          to="/liked"
+          className="flex items-center gap-4 text-gray-400 hover:text-white"
+        >
           <Heart className="w-6 h-6" /> Bài hát đã thích
-        </button>
+        </NavLink>
       </div>
     </div>
   );
-}
+};
+
 export default Sidebar;

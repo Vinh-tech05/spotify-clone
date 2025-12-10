@@ -1,40 +1,35 @@
 import { useEffect, useState } from "react";
-import { spotifyApi } from "../api/sportify.js";
-import Sidebar from "../components/SideBar";
-import SongRow from "../components/Songrow";
+import { spotifyApi } from "../api/sportify";
 import { useAuth } from "../context/AuthContext";
-import type { Track } from "../types/index.js";
+import PlaylistCard from "../components/PlaylistCard";
 
-function HomePage() {
+const HomePage = () => {
   const { token, user } = useAuth();
-  const [tracks, setTracks] = useState<Track[]>([]);
+  const [playlists, setPlaylists] = useState([]);
 
   useEffect(() => {
-    if (token) {
-      spotifyApi("/me/tracks?limit=20", token).then((data) =>
-        setTracks(data.items.map((i: any) => i.track))
-      );
-    }
+    if (!token) return;
+
+    spotifyApi("/me/playlists?limit=12", token).then((data) =>
+      setPlaylists(data.items)
+    );
   }, [token]);
 
   return (
-    <div className="flex h-screen bg-gradient-to-b from-purple-900 to-black">
-      <Sidebar />
-      <div className="flex-1 overflow-y-auto pb-24">
-        <div className="p-8">
-          <h1 className="text-5xl font-bold mb-8">
-            Chào mừng trở lại, {user?.display_name || "bạn"}!
-          </h1>
-          <h2 className="text-3xl font-bold mb-6">Bài hát đã thích</h2>
-          <div className="bg-white/5 rounded-lg p-4">
-            {tracks.map((track, i) => (
-              <SongRow key={track.id} track={track} index={i} />
-            ))}
-          </div>
-        </div>
+    <div className="p-8">
+      <h1 className="text-4xl font-bold mb-8">
+        Chào mừng, {user?.display_name}
+      </h1>
+
+      <h2 className="text-2xl font-semibold mb-6">Playlist nổi bật</h2>
+
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+        {playlists.map((pl) => (
+          <PlaylistCard key={pl.id} playlist={pl} />
+        ))}
       </div>
     </div>
   );
-}
+};
 
 export default HomePage;
