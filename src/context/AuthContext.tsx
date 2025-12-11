@@ -1,8 +1,8 @@
 import {
   createContext,
   useContext,
-  useState,
   useEffect,
+  useState,
   type ReactNode,
 } from "react";
 import {
@@ -46,11 +46,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
-    const code = getCodeFromUrl();
-    const savedToken = localStorage.getItem("spotify_token");
-
     const init = async () => {
       try {
+        const code = getCodeFromUrl();
+        const savedToken = localStorage.getItem("spotify_token");
+
         let accessToken = savedToken;
 
         if (!accessToken && code) {
@@ -63,6 +63,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           const profile = await spotifyApi("/me", accessToken);
           setUser(profile);
         }
+
+        //* XÓA CODE TRONG URL
+        if (code) {
+          window.history.replaceState({}, document.title, "/");
+        }
       } catch (err) {
         logout();
       } finally {
@@ -74,7 +79,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ token, user, loading, login, logout }}>
+    <AuthContext.Provider
+      value={{
+        token,
+        user,
+        loading,
+        login,
+        logout,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
@@ -82,6 +95,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
 export const useAuth = () => {
   const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error("useAuth must be used within AuthProvider");
+  if (!ctx) throw new Error("useAuth must be used inside AuthProvider");
   return ctx;
 };

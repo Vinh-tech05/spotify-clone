@@ -3,6 +3,7 @@ import {
   useContext,
   useState,
   useEffect,
+  useRef,
   type ReactNode,
 } from "react";
 import type { Track } from "../types/index.js";
@@ -11,10 +12,11 @@ import { useAuth } from "./AuthContext";
 interface PlayerContextType {
   currentTrack: Track | null;
   isPlaying: boolean;
+  progress: number;
+  duration: number;
   playTrack: (track: Track) => void;
   togglePlay: () => void;
-  playNext: () => void;
-  playPrev: () => void;
+  seek: (ms: number) => void;
   deviceId: string | null;
 }
 
@@ -22,12 +24,18 @@ const PlayerContext = createContext<PlayerContextType | null>(null);
 
 export const PlayerProvider = ({ children }: { children: ReactNode }) => {
   const { token } = useAuth();
+
   const [currentTrack, setCurrentTrack] = useState<Track | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [deviceId, setDeviceId] = useState<string | null>(null);
-  const [player, setPlayer] = useState<any>(null);
 
-  // Khởi tạo Web Playback SDK
+  const [progress, setProgress] = useState(0);
+  const [duration, setDuration] = useState(0);
+
+  const playerRef = useRef<any>(null);
+  const progressRef = useRef(0);
+  const draggingRef = useRef(false);
+
   useEffect(() => {
     if (!token) return;
 
@@ -39,13 +47,11 @@ export const PlayerProvider = ({ children }: { children: ReactNode }) => {
     window.onSpotifyWebPlaybackSDKReady = () => {
       const _player = new window.Spotify.Player({
         name: "Spotify Clone Player",
-        getOAuthToken: (cb) => {
-          cb(token);
-        },
+        getOAuthToken: (cb) => cb(token),
         volume: 0.5,
       });
 
-      setPlayer(_player);
+      playerRef.current = _player;
 
       _player.addListener("ready", ({ device_id }) => {
         setDeviceId(device_id);
@@ -53,19 +59,34 @@ export const PlayerProvider = ({ children }: { children: ReactNode }) => {
 
       _player.addListener("player_state_changed", (state) => {
         if (!state) return;
+
         setIsPlaying(!state.paused);
+        setDuration(state.duration);
+        setProgress(state.position);
+
+        progressRef.current = state.position;
       });
 
       _player.connect();
     };
   }, [token]);
 
-  // Play track
+  useEffect(() => {
+    if (!isPlaying) return;
+
+    const interval = setInterval(() => {
+      if (!draggingRef.current) {
+        progressRef.current += 1000;
+        setProgress(progressRef.current);
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [isPlaying]);
+
+  //* phát nhạc
   const playTrack = async (track: Track) => {
-    if (!deviceId) {
-      alert("Device chưa sẵn sàng, thử lại sau!");
-      return;
-    }
+    if (!deviceId) return alert("Player chưa sẵn sàng!");
 
     setCurrentTrack(track);
 
@@ -84,50 +105,35 @@ export const PlayerProvider = ({ children }: { children: ReactNode }) => {
     setIsPlaying(true);
   };
 
+  //* phát/ ngưng
   const togglePlay = async () => {
     if (!deviceId) return;
-    if (!player) return;
 
-    if (isPlaying) {
-      await fetch(
-        `https://api.spotify.com/v1/me/player/pause?device_id=${deviceId}`,
-        {
-          method: "PUT",
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-    } else {
-      await fetch(
-        `https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`,
-        {
-          method: "PUT",
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-    }
-    setIsPlaying((prev) => !prev);
-  };
-
-  const playNext = async () => {
-    if (!deviceId) return;
     await fetch(
-      `https://api.spotify.com/v1/me/player/next?device_id=${deviceId}`,
+      `https://api.spotify.com/v1/me/player/${
+        isPlaying ? "pause" : "play"
+      }?device_id=${deviceId}`,
       {
-        method: "POST",
+        method: "PUT",
         headers: { Authorization: `Bearer ${token}` },
       }
     );
+
+    setIsPlaying(!isPlaying);
   };
 
-  const playPrev = async () => {
+  //* tua
+  const seek = async (ms: number) => {
     if (!deviceId) return;
-    await fetch(
-      `https://api.spotify.com/v1/me/player/previous?device_id=${deviceId}`,
-      {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
+
+    draggingRef.current = false;
+    progressRef.current = ms;
+    setProgress(ms);
+
+    await fetch(`https://api.spotify.com/v1/me/player/seek?position_ms=${ms}`, {
+      method: "PUT",
+      headers: { Authorization: `Bearer ${token}` },
+    });
   };
 
   return (
@@ -135,10 +141,11 @@ export const PlayerProvider = ({ children }: { children: ReactNode }) => {
       value={{
         currentTrack,
         isPlaying,
+        progress,
+        duration,
         playTrack,
         togglePlay,
-        playNext,
-        playPrev,
+        seek,
         deviceId,
       }}
     >
@@ -148,7 +155,7 @@ export const PlayerProvider = ({ children }: { children: ReactNode }) => {
 };
 
 export const usePlayer = () => {
-  const context = useContext(PlayerContext);
-  if (!context) throw new Error("usePlayer must be used within PlayerProvider");
-  return context;
+  const ctx = useContext(PlayerContext);
+  if (!ctx) throw new Error("usePlayer must be used in PlayerProvider");
+  return ctx;
 };
