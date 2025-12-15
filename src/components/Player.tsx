@@ -9,16 +9,8 @@ const formatTime = (ms: number) => {
 };
 
 const Player = () => {
-  const {
-    currentTrack,
-    isPlaying,
-    togglePlay,
-    playNext,
-    playPrev,
-    progress,
-    duration,
-    seek,
-  } = usePlayer();
+  const { currentTrack, isPlaying, togglePlay, progress, duration, seek } =
+    usePlayer();
 
   if (!currentTrack) return null;
 
@@ -39,10 +31,7 @@ const Player = () => {
         </div>
         <div className="flex flex-col items-center w-1/3">
           <div className="flex items-center gap-5 mb-2">
-            <SkipBack
-              className="w-6 h-6 hover:scale-110 cursor-pointer"
-              onClick={playPrev}
-            />
+            <SkipBack className="w-6 h-6 hover:scale-110 cursor-pointer" />
 
             {isPlaying ? (
               <div
@@ -60,10 +49,7 @@ const Player = () => {
               </div>
             )}
 
-            <SkipForward
-              className="w-6 h-6 hover:scale-110 cursor-pointer"
-              onClick={playNext}
-            />
+            <SkipForward className="w-6 h-6 hover:scale-110 cursor-pointer" />
           </div>
         </div>
         <div className="w-1/3"></div>

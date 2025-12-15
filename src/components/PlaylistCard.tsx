@@ -12,7 +12,9 @@ function PlaylistCard({ playlist }: any) {
         src={playlist.images?.[0]?.url || "/playlist-placeholder.png"}
         className="rounded mb-3"
       />
-      <p className="font-semibold truncate">{playlist.name}</p>
+      <p className="font-semibold text-[rgb(255,255,255)] truncate">
+        {playlist.name}
+      </p>
     </div>
   );
 }

@@ -21,14 +21,14 @@ function generateCodeVerifier(length = 128) {
   return str;
 }
 
-function base64urlencode(str) {
+function base64urlencode(str: any) {
   return btoa(String.fromCharCode(...new Uint8Array(str)))
     .replace(/\+/g, "-")
     .replace(/\//g, "_")
     .replace(/=+$/, "");
 }
 
-async function generateCodeChallenge(verifier) {
+async function generateCodeChallenge(verifier: any) {
   const encoder = new TextEncoder();
   const data = encoder.encode(verifier);
   const digest = await crypto.subtle.digest("SHA-256", data);
@@ -49,7 +49,7 @@ export const getCodeFromUrl = () => {
   return params.get("code");
 };
 
-export const fetchToken = async (code) => {
+export const fetchToken = async (code: any) => {
   const verifier = localStorage.getItem("spotify_code_verifier") || "";
 
   const body = new URLSearchParams({
@@ -76,7 +76,7 @@ export const fetchToken = async (code) => {
   return data.access_token;
 };
 
-export const spotifyApi = async (endpoint, token) => {
+export const spotifyApi = async (endpoint: any, token: any) => {
   const res = await fetch(`https://api.spotify.com/v1${endpoint}`, {
     headers: { Authorization: `Bearer ${token}` },
   });

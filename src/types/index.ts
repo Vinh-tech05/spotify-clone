@@ -14,3 +14,28 @@ export interface User {
   email: string;
   images: { url: string }[];
 }
+
+export interface PlayerContextType {
+  currentTrack: Track | null;
+  isPlaying: boolean;
+  progress: number;
+  duration: number;
+  playTrack: (track: Track) => void;
+  togglePlay: () => void;
+  seek: (ms: number) => void;
+  deviceId: string | null;
+}
+
+export interface AuthContextType {
+  token: string | null;
+  user: User | null;
+  loading: boolean;
+  login: () => void;
+  logout: () => void;
+}
+
+export interface Playlist {
+  id: string;
+  name: string;
+  images: { url: string }[];
+}

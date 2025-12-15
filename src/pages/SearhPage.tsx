@@ -1,7 +1,7 @@
 import { useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { spotifyApi } from "../api/sportify";
-import SongRow from "../components/SongRow";
+import SongRow from "../components/Songrow";
 import { useAuth } from "../context/AuthContext";
 
 const SearchPage = () => {

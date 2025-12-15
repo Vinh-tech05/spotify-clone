@@ -6,19 +6,8 @@ import {
   useRef,
   type ReactNode,
 } from "react";
-import type { Track } from "../types/index.js";
+import type { PlayerContextType, Track } from "../types/index.js";
 import { useAuth } from "./AuthContext";
-
-interface PlayerContextType {
-  currentTrack: Track | null;
-  isPlaying: boolean;
-  progress: number;
-  duration: number;
-  playTrack: (track: Track) => void;
-  togglePlay: () => void;
-  seek: (ms: number) => void;
-  deviceId: string | null;
-}
 
 const PlayerContext = createContext<PlayerContextType | null>(null);
 
@@ -47,17 +36,17 @@ export const PlayerProvider = ({ children }: { children: ReactNode }) => {
     window.onSpotifyWebPlaybackSDKReady = () => {
       const _player = new window.Spotify.Player({
         name: "Spotify Clone Player",
-        getOAuthToken: (cb) => cb(token),
+        getOAuthToken: (cb: any) => cb(token),
         volume: 0.5,
       });
 
       playerRef.current = _player;
 
-      _player.addListener("ready", ({ device_id }) => {
+      _player.addListener("ready", ({ device_id }: any) => {
         setDeviceId(device_id);
       });
 
-      _player.addListener("player_state_changed", (state) => {
+      _player.addListener("player_state_changed", (state: any) => {
         if (!state) return;
 
         setIsPlaying(!state.paused);

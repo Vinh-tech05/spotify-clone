@@ -11,21 +11,7 @@ import {
   spotifyApi,
   getLoginUrl,
 } from "../api/sportify";
-
-interface User {
-  display_name: string;
-  email: string;
-  id: string;
-  images: { url: string }[];
-}
-
-interface AuthContextType {
-  token: string | null;
-  user: User | null;
-  loading: boolean;
-  login: () => void;
-  logout: () => void;
-}
+import type { AuthContextType, User } from "../types";
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
@@ -51,7 +37,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const code = getCodeFromUrl();
         const savedToken = localStorage.getItem("spotify_token");
 
-        let accessToken = savedToken;
+        let accessToken: any = savedToken;
 
         if (!accessToken && code) {
           accessToken = await fetchToken(code);

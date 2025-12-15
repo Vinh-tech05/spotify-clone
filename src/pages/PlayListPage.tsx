@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { spotifyApi } from "../api/sportify";
-import SongRow from "../components/SongRow";
+import SongRow from "../components/Songrow";
 import { useAuth } from "../context/AuthContext";
 
 const PlaylistPage = () => {
@@ -19,7 +19,9 @@ const PlaylistPage = () => {
 
   return (
     <div className="p-8 text-white">
-      <h1 className="text-3xl font-bold mb-6">Danh sách bài hát</h1>
+      <h1 className="text-3xl font-bold text-[rgb(255,255,255)] mb-6">
+        Danh sách bài hát
+      </h1>
 
       <div className="bg-white/5 rounded-lg p-4">
         {tracks.map((track: any, i) => (
