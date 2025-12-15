@@ -18,7 +18,7 @@ const LikeSongsPage = () => {
   }, [token]);
 
   return (
-    <div className="flex h-screen bg-gradient-to-b from-purple-900 to-black">
+    <div className="flex h-screen bg-gradient-to-b from-black-900 to-black">
       <div className="flex-1 overflow-y-auto pb-24 p-8">
         <h1 className="text-4xl font-bold text-[rgb(255,255,255)] mb-8">
           Bài hát đã thích

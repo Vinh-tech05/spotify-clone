@@ -1,11 +1,33 @@
-import { Home, Search, Library, PlusCircle, Heart } from "lucide-react";
-import { NavLink } from "react-router-dom";
+import { Heart, Home, PlusCircle, Search } from "lucide-react";
+import { NavLink, useNavigate } from "react-router-dom";
+import { createPlaylist } from "../api/playlist";
+import { useAuth } from "../context/AuthContext";
 
 const Sidebar = () => {
+  const { token } = useAuth();
+  const navigate = useNavigate();
+
   const navClass = ({ isActive }: { isActive: boolean }) =>
     `flex items-center gap-4 font-semibold ${
       isActive ? "text-white" : "text-gray-400 hover:text-white"
     }`;
+
+  const handleCreatePlaylist = async () => {
+    if (!token) return;
+
+    try {
+      const playlist = await createPlaylist(
+        token,
+        "New Playlist",
+        "Created from Spotify Clone",
+        false
+      );
+      navigate(`/playlist/${playlist.id}`);
+    } catch (err) {
+      console.error(err);
+      alert("Failed to create playlist");
+    }
+  };
 
   return (
     <div className="w-64 bg-[#121212] p-6 flex flex-col gap-8">
@@ -21,15 +43,14 @@ const Sidebar = () => {
         <NavLink to="/search" className={navClass}>
           <Search className="w-6 h-6" /> Tìm kiếm
         </NavLink>
-
-        <NavLink to="/library" className={navClass}>
-          <Library className="w-6 h-6" /> Thư viện
-        </NavLink>
       </nav>
 
       {/* Extra */}
       <div className="space-y-4 mt-6">
-        <button className="flex items-center gap-4 text-gray-400 hover:text-white">
+        <button
+          onClick={handleCreatePlaylist}
+          className="flex items-center gap-4 text-gray-400 hover:text-white"
+        >
           <PlusCircle className="w-6 h-6" /> Tạo Playlist
         </button>
 
