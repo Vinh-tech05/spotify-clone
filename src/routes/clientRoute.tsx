@@ -1,5 +1,6 @@
 import LayoutClient from "../layout/LayoutClient";
 import HomePage from "../pages/HomePage";
+import LibraryPage from "../pages/LibraryPage.tsx";
 import LikeSongsPage from "../pages/LikeSongsPage.tsx";
 import LoginPage from "../pages/LoginPage.tsx";
 import PlaylistPage from "../pages/PlayListPage.tsx";
@@ -20,6 +21,7 @@ const clientRoute = [
       { index: true, Component: HomePage },
       { path: "search", Component: SearhPage },
       { path: "liked", Component: LikeSongsPage },
+      { path: "library", Component: LibraryPage },
       { path: "playlist/:id", Component: PlaylistPage },
     ],
   },

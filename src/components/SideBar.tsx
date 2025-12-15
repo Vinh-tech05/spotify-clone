@@ -1,7 +1,7 @@
-import { Heart, Home, PlusCircle, Search } from "lucide-react";
+import { Home, Search, Library, PlusCircle, Heart } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { createPlaylist } from "../api/playlist";
 import { useAuth } from "../context/AuthContext";
+import { createPlaylist } from "../api/playlist";
 
 const Sidebar = () => {
   const { token } = useAuth();
@@ -42,6 +42,10 @@ const Sidebar = () => {
 
         <NavLink to="/search" className={navClass}>
           <Search className="w-6 h-6" /> Tìm kiếm
+        </NavLink>
+
+        <NavLink to="/library" className={navClass}>
+          <Library className="w-6 h-6" /> Thư viện
         </NavLink>
       </nav>
 
