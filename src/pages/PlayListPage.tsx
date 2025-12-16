@@ -13,6 +13,7 @@ import {
 import { spotifyApi } from "../api/sportify";
 import SongRow from "../components/Songrow";
 import { useAuth } from "../context/AuthContext";
+const { Search } = Input;
 
 const PlaylistPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -249,13 +250,14 @@ const PlaylistPage = () => {
             </p>
           </div>
 
-          <Input
+          <Search
             placeholder="Tìm bài hát, nghệ sĩ, album..."
             prefix={<SearchOutlined className="text-gray-400 text-xl" />}
             allowClear
             size="large"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
+            loading={loadingSearch}
             className="mb-6 bg-[#282828] border-none rounded-full"
             autoFocus
           />
