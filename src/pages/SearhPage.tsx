@@ -27,7 +27,13 @@ const SearchPage = () => {
 
       <div className="bg-white/5 rounded-lg p-4">
         {tracks.map((t: any, i) => (
-          <SongRow key={t.id} track={t} index={i} tracks={tracks} />
+          <SongRow
+            key={t.id}
+            track={t}
+            index={i}
+            tracks={tracks}
+            mode="playlist"
+          />
         ))}
       </div>
     </div>

@@ -213,6 +213,7 @@ const PlaylistPage = () => {
             index={index}
             playlistId={id}
             tracks={tracks}
+            mode="playlist"
             onRemoved={() =>
               setTracks((prev) => prev.filter((t) => t.uri !== track.uri))
             }
@@ -268,7 +269,8 @@ const PlaylistPage = () => {
                 track={track}
                 index={index}
                 playlistId={id}
-                tracks={tracks}
+                tracks={searchResults}
+                mode="search"
               />
               <Button
                 type="primary"
