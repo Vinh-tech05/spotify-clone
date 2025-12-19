@@ -43,7 +43,19 @@ export const getLoginUrl = async () => {
 
   const challenge = await generateCodeChallenge(verifier);
 
-  return `https://accounts.spotify.com/authorize?client_id=${CLIENT_ID}&response_type=code&redirect_uri=${REDIRECT_URI}&scope=${SCOPES}&show_dialog=true&code_challenge_method=S256&code_challenge=${challenge}`;
+  const redirectUri = encodeURIComponent(REDIRECT_URI);
+  const scope = encodeURIComponent(SCOPES);
+
+  return (
+    `https://accounts.spotify.com/authorize` +
+    `?client_id=${CLIENT_ID}` +
+    `&response_type=code` +
+    `&redirect_uri=${redirectUri}` +
+    `&scope=${scope}` +
+    `&show_dialog=true` +
+    `&code_challenge_method=S256` +
+    `&code_challenge=${challenge}`
+  );
 };
 
 export const getCodeFromUrl = () => {
