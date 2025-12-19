@@ -32,8 +32,6 @@ const SongRow = ({
   /* ---------------- PLAY ---------------- */
   const handlePlay = () => {
     if (!tracks.length) return;
-
-    // playlist & search đều dùng chung logic
     playQueue(tracks, index);
   };
 
