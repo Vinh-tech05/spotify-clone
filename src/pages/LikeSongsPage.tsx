@@ -26,7 +26,7 @@ const LikeSongsPage = () => {
 
         <div className="bg-white/5 rounded-lg p-4">
           {tracks.map((track, i) => (
-            <SongRow key={track.id} track={track} index={i} />
+            <SongRow key={track.id} track={track} index={i} tracks={tracks} />
           ))}
         </div>
       </div>

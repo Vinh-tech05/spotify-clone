@@ -39,3 +39,5 @@ export interface Playlist {
   name: string;
   images: { url: string }[];
 }
+
+export type RepeatMode = "off" | "one";

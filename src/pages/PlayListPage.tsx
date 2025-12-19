@@ -212,7 +212,7 @@ const PlaylistPage = () => {
             track={track}
             index={index}
             playlistId={id}
-            hidePlayIcon
+            tracks={tracks}
             onRemoved={() =>
               setTracks((prev) => prev.filter((t) => t.uri !== track.uri))
             }
@@ -264,7 +264,12 @@ const PlaylistPage = () => {
 
           {searchResults.map((track: any, index: number) => (
             <div key={track.id} className="relative group py-1">
-              <SongRow track={track} index={index} hidePlayIcon />
+              <SongRow
+                track={track}
+                index={index}
+                playlistId={id}
+                tracks={tracks}
+              />
               <Button
                 type="primary"
                 size="small"
